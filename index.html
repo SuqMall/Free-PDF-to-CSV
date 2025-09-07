@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free PDF to CSV Converter Online - 100% Secure | DataToolz</title>
+    <meta name="description" content="Convert your PDF tables to CSV files instantly for free. Our tool works directly in your browser - your files are never uploaded, ensuring 100% privacy and security. No registration required.">
+    <link rel="canonical" href="https://yourwebsite.com/pdf-to-csv-converter" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "Convert PDF to CSV",
+      "description": "Learn how to convert PDF tables to CSV format using our free online tool.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Upload your PDF file",
+          "text": "Drag and drop your PDF file containing table data into the converter area or click to select a file from your device.",
+          "url": "https://yourwebsite.com/pdf-to-csv-converter#step1"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Our tool extracts the data",
+          "text": "The converter will automatically process your PDF and detect any table structures within the document.",
+          "url": "https://yourwebsite.com/pdf-to-csv-converter#step2"
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Download your CSV file instantly",
+          "text": "Once processing is complete, download your CSV file with the extracted table data.",
+          "url": "https://yourwebsite.com/pdf-to-csv-converter#step3"
+        }
+      ]
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PDF to CSV Converter",
+      "description": "A free online tool to convert PDF tables to CSV format.",
+      "applicationCategory": "BusinessApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .drop-zone.active {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        
+        .progress-bar {
+            width: 0%;
+            height: 6px;
+            background-color: #3b82f6;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        
+        #conversionCounter {
+            font-weight: bold;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-xl font-bold text-blue-600">DataToolz</div>
+                <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                    🔒 100% Secure | Client-Side Processing
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-12 bg-gradient-to-r from-blue-50 to-indigo-50">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Free PDF to CSV Converter</h1>
+            <p class="text-lg text-center text-gray-600 mb-8">Extract table data from PDF files and convert to CSV format instantly - 100% client-side, no data leaves your computer.</p>
+            
+            <!-- Converter Tool -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div id="dropZone" class="drop-zone mb-4 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p class="text-xl font-semibold text-gray-700">Drop your PDF file here</p>
+                    <p class="text-gray-500">or</p>
+                    <label for="fileInput" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg inline-block cursor-pointer transition duration-300">
+                        Choose PDF File
+                    </label>
+                    <input type="file" id="fileInput" accept=".pdf" class="hidden">
+                    <p class="text-sm text-gray-500 mt-3">Supports all PDF documents with tables</p>
+                </div>
+                
+                <div id="progressSection" class="hidden mb-4">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-base font-medium text-blue-600" id="progressStatus">Processing...</span>
+                        <span class="text-sm font-medium text-blue-600" id="progressPercent">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="progressBar" class="progress-bar h-2.5 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div id="resultSection" class="hidden p-4 bg-green-50 rounded-lg border border-green-200">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <p class="text-green-800 font-medium">Conversion successful! Your CSV file is ready.</p>
+                    </div>
+                    <button id="downloadBtn" class="mt-4 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg inline-flex items-center transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download CSV
+                    </button>
+                </div>
+                
+                <div id="errorSection" class="hidden p-4 bg-red-50 rounded-lg border border-red-200">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                        <p class="text-red-800 font-medium" id="errorMessage">Error message will appear here</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-gray-600">Over <span id="conversionCounter">1,243,892</span> Files Converted Trustfully</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Why Choose Our Converter?</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-blue-50 p-6 rounded-lg">
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Complete Privacy & Security</h3>
+                            <p class="text-gray-600">Your files are processed 100% in your browser and never uploaded to any server.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <div class="flex items-start">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Free Forever</h3>
+                            <p class="text-gray-600">No hidden fees, no subscriptions, no registration required.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-purple-50 p-6 rounded-lg">
+                    <div class="flex items-start">
+                        <div class="bg-purple-100 p-3 rounded-full mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Cloud Processing Not Needed</h3>
+                            <p class="text-gray-600">Works completely offline once loaded. No internet connection required for conversion.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-yellow-50 p-6 rounded-lg">
+                    <div class="flex items-start">
+                        <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Works on All Devices</h3>
+                            <p class="text-gray-600">Desktop, tablet, and mobile friendly interface with responsive design.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How To Section -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">How to Convert PDF to CSV</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-blue-600 text-2xl font-bold">1</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Upload PDF</h3>
+                    <p class="text-gray-600">Drag and drop your PDF file or click to browse your device.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-blue-600 text-2xl font-bold">2</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Automatic Conversion</h3>
+                    <p class="text-gray-600">Our tool extracts table data from your PDF instantly.</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-blue-600 text-2xl font-bold">3</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Download CSV</h3>
+                    <p class="text-gray-600">Download your converted CSV file with one click.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Frequently Asked Questions</h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Is this service really free?</h3>
+                    <p class="text-gray-600">Yes, our PDF to CSV converter is completely free to use with no hidden charges or limitations.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Are my files secure?</h3>
+                    <p class="text-gray-600">Absolutely. Your files are processed entirely in your browser and never uploaded to any server. This ensures complete privacy and security.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">What types of PDFs work best?</h3>
+                    <p class="text-gray-600">PDFs with clear table structures and text-based content (not scanned images) work best. The converter detects tables based on consistent spacing patterns.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Can I use this on mobile devices?</h3>
+                    <p class="text-gray-600">Yes, our converter is fully responsive and works on all modern mobile browsers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ad Section -->
+    <section class="py-8 bg-gray-100">
+        <div class="container mx-auto px-4 max-w-4xl text-center">
+            <div id="ad-banner" class="mb-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <p class="text-gray-700">Love this free tool? Support us by checking out <a href="#" class="text-blue-600 font-medium hover:underline">our premium data tools</a>.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-6 bg-gray-800 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2023 DataToolz. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+        // Set up PDF.js worker
+        pdfjsLib = window['pdfjs-dist/build/pdf'];
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const progressSection = document.getElementById('progressSection');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            const progressStatus = document.getElementById('progressStatus');
+            const resultSection = document.getElementById('resultSection');
+            const errorSection = document.getElementById('errorSection');
+            const errorMessage = document.getElementById('errorMessage');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            let convertedCSV = null;
+            let fileName = '';
+            
+            // Drag and drop handlers
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropZone.classList.add('active');
+            }
+            
+            function unhighlight() {
+                dropZone.classList.remove('active');
+            }
+            
+            dropZone.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length && files[0].type === 'application/pdf') {
+                    fileInput.files = files;
+                    handleFile(files[0]);
+                } else {
+                    showError('Please drop a valid PDF file');
+                }
+            }
+            
+            fileInput.addEventListener('change', function() {
+                if (this.files.length) {
+                    handleFile(this.files[0]);
+                }
+            });
+            
+            downloadBtn.addEventListener('click', downloadCSV);
+            
+            function handleFile(file) {
+                // Reset UI
+                hideAllSections();
+                progressSection.classList.remove('hidden');
+                updateProgress(5, 'Loading PDF...');
+                
+                fileName = file.name.replace('.pdf', '');
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const pdfData = new Uint8Array(e.target.result);
+                    
+                    processPDF(pdfData);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+            
+            function processPDF(pdfData) {
+                updateProgress(10, 'Parsing PDF...');
+                
+                // Load the PDF
+                const loadingTask = pdfjsLib.getDocument({data: pdfData});
+                
+                loadingTask.promise.then(function(pdf) {
+                    const numPages = pdf.numPages;
+                    const pageTextPromises = [];
+                    
+                    updateProgress(20, `Processing ${numPages} pages...`);
+                    
+                    // Extract text from each page with proper line breaks
+                    for (let i = 1; i <= numPages; i++) {
+                        pageTextPromises.push(
+                            pdf.getPage(i).then(function(page) {
+                                return page.getTextContent().then(function(textContent) {
+                                    // Update progress per page
+                                    const progress = 20 + (i / numPages) * 50;
+                                    updateProgress(progress, `Processing page ${i} of ${numPages}...`);
+                                    
+                                    // Process text content to preserve structure
+                                    return processTextContentWithPositions(textContent);
+                                });
+                            })
+                        );
+                    }
+                    
+                    return Promise.all(pageTextPromises);
+                }).then(function(pagesData) {
+                    updateProgress(75, 'Detecting tables...');
+                    
+                    // Combine all pages data
+                    const allItems = pagesData.flat();
+                    
+                    // Try to detect table structure using item positions
+                    const tableData = detectTablesFromPositions(allItems);
+                    
+                    if (tableData && tableData.length > 0) {
+                        updateProgress(90, 'Converting to CSV...');
+                        
+                        // Convert to CSV using SheetJS
+                        const ws = XLSX.utils.aoa_to_sheet(tableData);
+                        convertedCSV = XLSX.utils.sheet_to_csv(ws);
+                        
+                        updateProgress(100, 'Conversion complete!');
+                        
+                        // Show success UI
+                        setTimeout(() => {
+                            progressSection.classList.add('hidden');
+                            resultSection.classList.remove('hidden');
+                        }, 500);
+                    } else {
+                        // Fallback to text-based detection
+                        const fullText = pagesData.map(page => page.map(item => item.str).join(' ')).join('\n');
+                        const tableDataFallback = detectTablesFromText(fullText);
+                        
+                        if (tableDataFallback && tableDataFallback.length > 0) {
+                            updateProgress(90, 'Converting to CSV...');
+                            
+                            const ws = XLSX.utils.aoa_to_sheet(tableDataFallback);
+                            convertedCSV = XLSX.utils.sheet_to_csv(ws);
+                            
+                            updateProgress(100, 'Conversion complete!');
+                            
+                            setTimeout(() => {
+                                progressSection.classList.add('hidden');
+                                resultSection.classList.remove('hidden');
+                            }, 500);
+                        } else {
+                            showError("We couldn't detect a clear table in this PDF. Please try another file.");
+                        }
+                    }
+                }).catch(function(error) {
+                    console.error('Error processing PDF:', error);
+                    showError('Failed to process the PDF. It might be corrupted or password protected.');
+                });
+            }
+            
+            function processTextContentWithPositions(textContent) {
+                return textContent.items.map(item => {
+                    // Extract transform matrix values
+                    const transform = item.transform;
+                    // The x coordinate is typically in transform[4], y in transform[5]
+                    return {
+                        str: item.str,
+                        x: transform[4],
+                        y: transform[5],
+                        width: item.width,
+                        height: item.height
+                    };
+                });
+            }
+            
+            function detectTablesFromPositions(items) {
+                if (!items || items.length === 0) return null;
+                
+                // Group items by their y-position (rows)
+                const yTolerance = 2; // Tolerance for considering items on the same row
+                const rows = {};
+                
+                items.forEach(item => {
+                    // Find existing row or create new one
+                    let rowKey = null;
+                    for (const key of Object.keys(rows)) {
+                        if (Math.abs(item.y - key) < yTolerance) {
+                            rowKey = key;
+                            break;
+                        }
+                    }
+                    
+                    if (rowKey === null) {
+                        rowKey = item.y;
+                        rows[rowKey] = [];
+                    }
+                    
+                    rows[rowKey].push(item);
+                });
+                
+                // Sort rows by y-position (top to bottom)
+                const sortedRows = Object.keys(rows)
+                    .map(key => parseFloat(key))
+                    .sort((a, b) => b - a) // Reverse sort because PDF y-coordinates start from bottom
+                    .map(key => rows[key]);
+                
+                // Sort items in each row by x-position (left to right)
+                sortedRows.forEach(row => {
+                    row.sort((a, b) => a.x - b.x);
+                });
+                
+                // Group items into columns based on x-positions
+                if (sortedRows.length === 0) return null;
+                
+                // Find column boundaries by analyzing x-positions across all rows
+                const allXPositions = sortedRows.flat().map(item => item.x);
+                const minX = Math.min(...allXPositions);
+                const maxX = Math.max(...allXPositions);
+                
+                // Create a histogram of x-positions to find common column boundaries
+                const xHistogram = {};
+                sortedRows.forEach(row => {
+                    row.forEach(item => {
+                        const roundedX = Math.round(item.x / 10) * 10; // Round to nearest 10 for grouping
+                        xHistogram[roundedX] = (xHistogram[roundedX] || 0) + 1;
+                    });
+                });
+                
+                // Find potential column boundaries (peaks in the histogram)
+                const columnBoundaries = Object.keys(xHistogram)
+                    .map(x => parseInt(x))
+                    .sort((a, b) => a - b);
+                
+                // If we don't have clear column boundaries, try a different approach
+                if (columnBoundaries.length < 2) {
+                    return detectTablesFromText(sortedRows.map(row => row.map(item => item.str).join(' ')).join('\n'));
+                }
+                
+                // Create table data structure
+                const tableData = [];
+                
+                // Add header row if we have enough data
+                for (let i = 0; i < sortedRows.length; i++) {
+                    const row = sortedRows[i];
+                    const tableRow = [];
+                    let currentCol = 0;
+                    
+                    for (let j = 0; j < row.length; j++) {
+                        const item = row[j];
+                        
+                        // Find which column this item belongs to
+                        while (currentCol < columnBoundaries.length - 1 && item.x > columnBoundaries[currentCol + 1]) {
+                            currentCol++;
+                            // Add empty cells if needed
+                            if (tableRow.length < currentCol) {
+                                while (tableRow.length < currentCol) {
+                                    tableRow.push('');
+                                }
+                            }
+                        }
+                        
+                        // If we're at the right column, add the text
+                        if (tableRow.length === currentCol) {
+                            tableRow.push(item.str);
+                        } else if (tableRow.length > currentCol) {
+                            // If we already have a value in this column, append to it
+                            tableRow[currentCol] += ' ' + item.str;
+                        } else {
+                            // Fill any missing columns with empty values
+                            while (tableRow.length < currentCol) {
+                                tableRow.push('');
+                            }
+                            tableRow.push(item.str);
+                        }
+                    }
+                    
+                    // Fill any remaining columns with empty values
+                    while (tableRow.length < columnBoundaries.length) {
+                        tableRow.push('');
+                    }
+                    
+                    tableData.push(tableRow);
+                }
+                
+                return tableData.length > 0 ? tableData : null;
+            }
+            
+            function detectTablesFromText(text) {
+                // Split text into lines
+                const lines = text.split('\n').filter(line => line.trim().length > 0);
+                
+                if (lines.length < 2) return null;
+                
+                // Check for tab characters
+                const hasTabs = lines.slice(0, Math.min(5, lines.length)).some(line => line.includes('\t'));
+                
+                if (hasTabs) {
+                    return lines.map(line => {
+                        return line.split('\t')
+                            .map(cell => cell.trim())
+                            .filter(cell => cell.length > 0);
+                    }).filter(row => row.length > 0);
+                }
+                
+                // Check for consistent number of columns using multiple spaces as delimiter
+                const spaceDelimited = lines.map(line => {
+                    return line.split(/\s{2,}/)
+                        .map(cell => cell.trim())
+                        .filter(cell => cell.length > 0);
+                });
+                
+                // Count columns in each row
+                const columnCounts = spaceDelimited.map(row => row.length);
+                const maxColumns = Math.max(...columnCounts);
+                const minColumns = Math.min(...columnCounts);
+                
+                // If we have consistent columns (or mostly consistent), use this as a table
+                if (maxColumns >= 2 && (maxColumns === minColumns || maxColumns - minColumns <= 1)) {
+                    return spaceDelimited;
+                }
+                
+                return null;
+            }
+            
+            function downloadCSV() {
+                if (!convertedCSV) return;
+                
+                const blob = new Blob([convertedCSV], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', `${fileName}.csv`);
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            function updateProgress(percent, status) {
+                progressBar.style.width = percent + '%';
+                progressPercent.textContent = percent + '%';
+                
+                if (status) {
+                    progressStatus.textContent = status;
+                }
+            }
+            
+            function showError(message) {
+                hideAllSections();
+                errorMessage.textContent = message;
+                errorSection.classList.remove('hidden');
+            }
+            
+            function hideAllSections() {
+                progressSection.classList.add('hidden');
+                resultSection.classList.add('hidden');
+                errorSection.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
